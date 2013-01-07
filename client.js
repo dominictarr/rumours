@@ -1,6 +1,5 @@
 var reconnect = require('reconnect')
 var reloader  = require('client-reloader')
-var header   = require('header-stream')
 
 var schema    = require('./schema')
 var Remote    = require('scuttlebutt-remote')
@@ -22,15 +21,10 @@ module.exports = function (meta) {
   if(!meta.name) throw new Error('must provide db name')
 
   var r = reconnect(reloader(function (stream) {
-    console.log('connection', stream)
     var client = Remote(schema)
     stream.pipe(client).pipe(stream)
     r.emit('client', client)
   }, meta)).connect(host + '/sync')
-
-  r.on('client', function (client) {
-    console.log('client', client)
-  })
 
   return r
 }
