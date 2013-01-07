@@ -12,9 +12,11 @@ module.exports = require('scuttlebutt-schema')({
   'events': create(require('scuttlebutt/events')),
   'r-edit': create(require('r-edit')),
   'r-array': create(require('r-array')),
-  'crdt': create(require('crdt')),
-  'append-only': create(require('append-only')),
-  'expiry-model': create(require('expiry-model'))
+  'crdt': create(require('crdt'))
+  //,
+  //can't use this until @Raynos updates them to scuttlebutt ~5.5
+  //'append-only': create(require('append-only')),
+  //'expiry-model': create(require('expiry-model'))
 })
 
 console.log(module.exports)

@@ -9,15 +9,21 @@
   "dependencies": {
     "client-reloader": "~1.1.0",
     "scuttlebutt-schema": "~1.1.2",
-    "scuttlebutt": "~5.5.4",
+    "scuttlebutt": "~5.5",
     "rc": "0.0.6",
     "scuttlebutt-remote": "0.0",
     "through": "~2.1.0",
-    "r-array": "~0.3.1",
-    "r-edit": "0.0.6",
+    "r-array": "~0.3",
+    "r-edit": "~0.0",
     "level-scuttlebutt": "~1.1.2",
     "shasum": "0.0.2",
-    "udid": "~0.1.2"
+    "udid": "~0.1.2",
+    "crdt": "~3.2.2",
+    "mkdirp": "~0.3.4",
+    "ecstatic": "~0.3.0",
+    "shoe": "0.0.7",
+    "reconnect": "~0.3.1",
+    "levelup": "~0.4.4"
   },
   "devDependencies": {},
   "scripts": {
