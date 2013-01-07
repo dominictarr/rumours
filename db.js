@@ -39,8 +39,19 @@ module.exports = function (name, cb) {
     //don't give each database the same hash,
     //that will reveal that they are on the same server to attackers.
     var id = shasum(udid + name)
-
     LevelScuttlebutt(db, id, schema)
+
+    //just a simple count of all items.
+    db.scuttlebutt.addMapReduce({
+      name: 'all',
+      map: function (key, model, emit) {
+        emit(model.name, 1)
+      },
+      reduce: function (acc, item) {
+        return Number(acc) + Number(item)
+      },
+      initial: 0
+    })
 
     dbs[name] = db
 
