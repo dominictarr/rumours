@@ -15,7 +15,6 @@ var udid = require('udid')('sync')
 var fs = require('fs')
 
 shoe(reloader(function (stream) {
-  console.log('connection', stream.meta)
   var ts = through().pause()
   stream.pipe(ts)
   var dbName = stream.meta.db
