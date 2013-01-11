@@ -1,6 +1,5 @@
 function create (con) {
   return function () {
-    console.log(con)
     return new con()
   }
 }
@@ -19,4 +18,3 @@ module.exports = require('scuttlebutt-schema')({
   //'expiry-model': create(require('expiry-model'))
 })
 
-console.log(module.exports)
