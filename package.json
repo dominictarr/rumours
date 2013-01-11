@@ -15,7 +15,7 @@
     "through": "~2.1.0",
     "r-array": "~0.3",
     "r-edit": "~0.0",
-    "level-scuttlebutt": "~1.3",
+    "level-scuttlebutt": "~2.0",
     "shasum": "0.0.2",
     "udid": "~0.1.2",
     "crdt": "~3.2.2",
