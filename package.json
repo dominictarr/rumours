@@ -7,7 +7,7 @@
     "url": "git://github.com/dominictarr/rumours.git"
   },
   "dependencies": {
-    "client-reloader": "~1.1.0",
+    "client-reloader": "~1.1.2",
     "scuttlebutt-schema": "~1.2",
     "scuttlebutt": "~5.5",
     "rc": "0.0.6",
