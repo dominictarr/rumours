@@ -19,37 +19,17 @@ module.exports = function (config) {
   var schema = config.schema || require('./schema')
   var remote = Remote(schema)
 
-  console.log('RUMOURS')
-
   var r = reconnect(reloader(function (stream) {
     //this will load the default schema into the bundle,
     //should do this a different way, to avoid that when using custom schemas.
-    console.log('CONNECT')
-    stream.on('end', function () {
-      console.log('END')
-    })
-    var rs = stream.pipe(remote.createStream().on('data', function (data) {
-      console.log('>>', data)
-    }))
-    console.log('pipe stream')
-
-    rs.pipe(stream)
-    stream.on('data', function (data) {
-      console.log('<<', data)
-    })
-
-   /* setInterval(function () {
-      stream.write(new Date())
-    }, 1e3)
-    */
-
+    stream.pipe(remote.createStream()).pipe(stream)
   }, config)).connect(host + (config.prefix || '/' + (config.name || 'rumours')))
 
-  r.on('connect', function () {
-    console.log('CONNECTION#################')
-  })
 
+  r.open = remote.open
+  r.view = remote.view
   r.remote = remote
+
   return r
 }
 
