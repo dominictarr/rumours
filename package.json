@@ -22,7 +22,7 @@
     "mkdirp": "~0.3.4",
     "ecstatic": "~0.3.0",
     "shoe": "0.0.7",
-    "reconnect": "~0.3.1",
+    "reconnect": "~0.4.2",
     "levelup": "~0.5.1"
   },
   "devDependencies": {},
