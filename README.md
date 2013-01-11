@@ -1,7 +1,6 @@
-# 0
+# rumours
 
-<img src=https://secure.travis-ci.org/Dominic Tarr/0.png?branch=master>
-
+Integration of scuttlebutt family into an easy-to-use server.
 
 ## License
 
