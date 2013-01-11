@@ -1,16 +1,15 @@
 var levelup = require('levelup')
 var join    = require('path').join
-var mkdirp  = require('mkdirp')
 var LevelScuttlebutt 
             = require('level-scuttlebutt')
 var udid    = require('udid')('sync')
 var shasum  = require('shasum')
+var Remote  = require('scuttlebutt-remote')
 
 var config  = require('./config')
 var schema  = require('./schema')
 
 var dbs = {}
-
 
 function whenReady (db, cb) {
   if(db.isOpen()) cb(null, db)
@@ -24,25 +23,21 @@ function whenReady (db, cb) {
   }
   db.once('ready', onReady)
   db.once('error', onError)
+  return db
 }
 
-module.exports = function (name, cb) {
-  if(dbs[name])
-    return whenReady(dbs[name], cb)
+module.exports = function (config) {
+  config = config || {
+    root: '/tmp/rumours-default'
+  }
 
-  var dir = join(config.root, name)
-  mkdirp(dir, function (err) {
-    if(err) return cb(err)
+  config.schema = config.schema || require('./schema')
 
-    var db = levelup(dir, {createIfMissing: true})
+  console.log('CONFIG', config)
 
-    //don't give each database the same hash,
-    //that will reveal that they are on the same server to attackers.
-    var id = shasum(udid + name)
-    LevelScuttlebutt(db, id, schema)
-
-    //just a simple count of all items.
-    db.scuttlebutt.addMapReduce({
+  //just a simple count of all items.
+  var views  = config.views || [
+    {
       name: 'all',
       map: function (key, model, emit) {
         emit(model.name, 1)
@@ -51,10 +46,31 @@ module.exports = function (name, cb) {
         return Number(acc) + Number(item)
       },
       initial: 0
-    })
+    }
+  ]
+
+  return function (name, cb) {
+
+    if(dbs[name]) {
+      return whenReady(dbs[name], cb)
+    }
+    var dir = join(config.root, name)
+    var db = levelup(dir, {createIfMissing: true})
+
+    //don't give each database the same hash,
+    //that will reveal that they are on the same server to attackers.
+    var id = shasum(udid + name)
+    LevelScuttlebutt(db, id, config.schema)
+    if(config.views)
+      config.views.forEach(db.scuttlebutt.addMapReduce)
+
+    var r = Remote(config.schema).openDb(db)
+    db.remote = r
 
     dbs[name] = db
 
     whenReady(dbs[name], cb)
-  })
+    return db
+  }
 }
+

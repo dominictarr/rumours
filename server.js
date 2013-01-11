@@ -7,30 +7,44 @@ var reloader = require('client-reloader')
 var Remote   = require('scuttlebutt-remote')
 var through  = require('through')
 
-var config   = require('./config')
-var db       = require('./db')
-
-var udid = require('udid')('sync')
+//var config   = require('./config')
 
 var fs = require('fs')
 
-shoe(reloader(function (stream) {
-  var ts = through().pause()
-  stream.pipe(ts)
-  var dbName = stream.meta.db
-  db(dbName, function (err, db) {
-    if(err) {
-      stream.end()
-      ts.resume()
-      return
-    }
-    ts.pipe(Remote(db)).pipe(stream)
-    ts.resume()    
-  })
-})).install(
-  http.createServer(ecstatic(join(process.cwd(), 'static')))
-   .listen(config.port, function () {
-    console.log( 'listening on', config.port)
-  })
-, '/sync')
+module.exports = function (config) {
+  var udid         = require('udid')(config.name || 'rumours')
+  var loadDb       = require('./db')()
 
+  shoe(reloader(function (stream) {
+    console.log('connection')
+    var ts = through().pause()
+    
+//    stream.pipe(ts)
+//    stream.on('data', console.log)
+
+    var dbName = stream.meta.db
+    var db = loadDb(dbName, function (err, db) {
+      console.log('LOADED DB', db.remote)
+      if(err) {
+        console.error(err)
+        stream.end()
+        ts.resume()
+        return
+      }
+
+      //ts.pipe(db.remote.createStream()).pipe(stream)
+      //ts.resume()
+    })
+
+    stream.pipe(db.remote.createStream()).pipe(stream)
+
+  })).install(
+    http.createServer(ecstatic(config.static))
+     .listen(config.port, function () {
+      console.log( 'listening on', config.port)
+    })
+  , config.prefix || '/' + (config.name || 'rumours'))
+}
+
+if(!module.parent)
+  module.exports(require('./config'))
