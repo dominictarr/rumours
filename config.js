@@ -1,5 +1,6 @@
 
-module.exports = require('rc')('sync', {
-  root: '/tmp/sync',
+module.exports = require('rc')('rumours', {
+  root: '/tmp/rumours',
+  static: './static',
   port: 4567,
 })
