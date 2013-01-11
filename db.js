@@ -33,8 +33,6 @@ module.exports = function (config) {
 
   config.schema = config.schema || require('./schema')
 
-  console.log('CONFIG', config)
-
   //just a simple count of all items.
   var views  = config.views || [
     {

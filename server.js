@@ -18,18 +18,12 @@ module.exports = function (config) {
 
   var server =  http.createServer(ecstatic(config.static))
 
-
-  shoe(reloader(function (stream) {
-    console.log('connection')
-    var ts = through().pause()
-    
+  shoe(reloader(function (stream) {    
     var dbName = stream.meta.db
-    var db = loadDb(dbName, function (err, db) {
+    var db = loadDb(dbName, function (err) {
       if(err) {
         console.error(err)
         stream.end()
-        ts.resume()
-        return
       }
     })
 
