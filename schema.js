@@ -6,7 +6,7 @@ function create (con) {
 
 //all the scuttlebutt subclasses written so far.
 
-module.exports = require('scuttlebutt-schema')({
+module.exports = {
   'model': create(require('scuttlebutt/model')),
   'events': create(require('scuttlebutt/events')),
   'r-edit': create(require('r-edit')),
@@ -15,5 +15,5 @@ module.exports = require('scuttlebutt-schema')({
   'append-only': create(require('append-only')),
   'expiry-model': create(require('expiry-model'))
   //hmm, what about scuttlebucket?
-})
+}
 

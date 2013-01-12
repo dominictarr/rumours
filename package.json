@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "client-reloader": "~1.1.2",
-    "scuttlebutt-schema": "~1.2",
     "scuttlebutt": "~5.5",
     "rc": "0.0.6",
     "scuttlebutt-remote": "~1.0.1",
@@ -25,7 +24,8 @@
     "reconnect": "~0.4.2",
     "levelup": "~0.5.1",
     "append-only": "~0.2.3",
-    "expiry-model": "~1.0.2"
+    "expiry-model": "~1.0.2",
+    "scuttlebutt-schema": "~1.2.1"
   },
   "devDependencies": {},
   "scripts": {
