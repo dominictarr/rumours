@@ -13,7 +13,8 @@ module.exports = function (config) {
   //run on local by default for now...
   //but later, it will be rumours.nearform.com or whatever...
 
-  var host = config.host || 'http://localhost:3000'
+  var host = config.host || window.location.host + '//' + window.location.host
+
   config.name = config.name || 'rumours'
 
   var schema = config.schema || require('./schema')
