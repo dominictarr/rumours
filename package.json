@@ -10,11 +10,10 @@
     "client-reloader": "~1.1.2",
     "scuttlebutt": "~5.5",
     "rc": "0.0.6",
-    "scuttlebutt-remote": "~1.0.1",
     "through": "~2.1.0",
     "r-array": "~0.4",
     "r-edit": "~0.1",
-    "level-scuttlebutt": "~2.0",
+    "level-scuttlebutt": "~4.0.1",
     "shasum": "0.0.2",
     "udid": "~0.1.2",
     "crdt": "~3.2.2",
@@ -25,15 +24,19 @@
     "levelup": "~0.5.1",
     "append-only": "~0.2.3",
     "expiry-model": "~1.0.2",
-    "scuttlebutt-schema": "~1.2.1"
+    "stack": "~0.1.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "set -e; for t in test/*.js; do node $t; done"
+    "test": "set -e; for t in test/*.js; do node $t; done",
+    "build": "./build.sh"
   },
   "bin": {
     "rumours": "./server.js"
   },
+  "main": "./server.js",
+  "browser": "./client.js",
+  "browserify": "./client.js",
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT"
 }

@@ -4,7 +4,6 @@ var LevelScuttlebutt
             = require('level-scuttlebutt')
 var udid    = require('udid')('sync')
 var shasum  = require('shasum')
-var Remote  = require('scuttlebutt-remote')
 
 var config  = require('./config')
 var schema  = require('./schema')
@@ -32,6 +31,8 @@ module.exports = function (config) {
   }
 
   config.schema = config.schema || require('./schema')
+
+  console.log(config.schema)
 
   //just a simple count of all items.
   var views  = config.views || [
@@ -61,9 +62,6 @@ module.exports = function (config) {
     LevelScuttlebutt(db, id, config.schema)
     if(config.views)
       config.views.forEach(db.scuttlebutt.addMapReduce)
-
-    var r = Remote(config.schema).openDb(db)
-    db.remote = r
 
     dbs[name] = db
 

@@ -4,10 +4,8 @@ var ecstatic = require('ecstatic')
 var http     = require('http')
 var join     = require('path').join
 var reloader = require('client-reloader')
-var Remote   = require('scuttlebutt-remote')
 var through  = require('through')
-
-//var config   = require('./config')
+var Stack    = require('stack')
 
 var fs = require('fs')
 
@@ -16,9 +14,13 @@ module.exports = function (config) {
   var udid         = require('udid')(config.name || 'rumours')
   var loadDb       = require('./db')(config)
 
-  var server =  http.createServer(ecstatic(config.static))
+  var server =  http.createServer(Stack(
+        ecstatic(config.static || './static'),
+        ecstatic(join(__dirname, 'static'))
+      ))
 
   shoe(reloader(function (stream) {    
+    console.log('connection')
     var dbName = stream.meta.db
     var db = loadDb(dbName, function (err) {
       if(err) {
@@ -26,17 +28,19 @@ module.exports = function (config) {
         stream.end()
       }
     })
-
-    stream.pipe(db.remote.createStream()).pipe(stream)
-
-  })).install(server, config.prefix || '/' + (config.name || 'rumours'))
+    var s
+    stream.pipe(s = db.scuttlebutt.createRemoteStream()).pipe(stream)
+    stream.pipe(process.stderr, {end: false})
+  })).install(server, config.prefix || '/rumours')
 
   return server
 }
 
-if(!module.parent)
-  module.exports(require('./config'))
+if(!module.parent) {
+  var config = require('./config')
+  module.exports(config)
     .listen(config.port, function () {
       console.log( 'listening on', config.port)
     })
+}
 
