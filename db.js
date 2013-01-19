@@ -2,7 +2,7 @@ var levelup = require('levelup')
 var join    = require('path').join
 var LevelScuttlebutt 
             = require('level-scuttlebutt')
-var udid    = require('udid')('sync')
+var udid    = require('udid')('rumours')
 var shasum  = require('shasum')
 
 var config  = require('./config')
@@ -31,8 +31,6 @@ module.exports = function (config) {
   }
 
   config.schema = config.schema || require('./schema')
-
-  console.log(config.schema)
 
   //just a simple count of all items.
   var views  = config.views || [

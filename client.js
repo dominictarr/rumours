@@ -18,7 +18,7 @@ module.exports = function (config) {
   config.name = config.name || 'rumours'
   config.prefix = config.prefix || '/rumours'
   var schema = config.schema || require('./schema')
-  var remote = Remote(schema)
+  var remote = Remote(schema, udid)
 
   var r = reconnect(reloader(function (stream) {
     //this will load the default schema into the bundle,
@@ -28,7 +28,8 @@ module.exports = function (config) {
 
   r.open = remote.open
   r.view = remote.view
-
+  r._remote = remote
+  r.id = udid
   return r
 }
 
