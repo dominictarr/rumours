@@ -19,18 +19,34 @@ module.exports = function (config) {
         ecstatic(join(__dirname, 'static'))
       ))
 
-  shoe(reloader(function (stream) {    
-    console.log('connection')
-    var dbName = stream.meta.db
-    var db = loadDb(dbName, function (err) {
+  //inject arbitary authorization about who can access what db here...
+  var auth = config.auth || function (meta, cb) {
+    console.log('connection', meta)
+    return cb(null, meta.db)
+  }
+
+  shoe(reloader(function (stream) {
+    var ts = through().pause(), s
+
+    function error(err) {
       if(err) {
         console.error(err)
+        ts.end(); ts.resume()
+        if(s) s.end()
         stream.end()
       }
+    }
+
+    auth(stream.meta, function (err, name) {
+      if(err) return error(err)
+      var db = loadDb(name, function (err) {
+        if(err) return error(err)
+        ts.resume()
+      })
+      ts.pipe(s = db.scuttlebutt.createRemoteStream()).pipe(stream)
     })
-    var s
-    stream.pipe(s = db.scuttlebutt.createRemoteStream()).pipe(stream)
-    stream.pipe(process.stderr, {end: false})
+
+    stream.pipe(ts)
   })).install(server, config.prefix || '/rumours')
 
   return server
