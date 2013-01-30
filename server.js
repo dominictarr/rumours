@@ -49,6 +49,8 @@ var Rumours = module.exports = function (config) {
   return sh
 }
 
+Rumours.static = join(__dirname, 'static')
+
 if(!module.parent) {
   var ecstatic = require('ecstatic')
   var http     = require('http')
@@ -63,7 +65,7 @@ if(!module.parent) {
   Rumours(config).install(
     http.createServer(Stack(
         ecstatic(config.static),
-        ecstatic(join(__dirname, 'static'))
+        ecstatic(Rumours.static)
       ))
     .listen(config.port, function () {
       console.log( 'listening on', config.port)
