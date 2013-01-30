@@ -21,7 +21,7 @@
     "ecstatic": "~0.3.0",
     "shoe": "0.0.7",
     "reconnect": "~0.4.2",
-    "levelup": "~0.5.1",
+    "levelup": "~0.5.3",
     "append-only": "~0.2.3",
     "expiry-model": "~1.0.2",
     "stack": "~0.1.0"
