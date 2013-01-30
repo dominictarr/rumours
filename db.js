@@ -5,7 +5,6 @@ var LevelScuttlebutt
 var udid    = require('udid')('rumours')
 var shasum  = require('shasum')
 
-var config  = require('./config')
 var schema  = require('./schema')
 
 var dbs = {}
