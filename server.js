@@ -1,23 +1,14 @@
 #! /usr/bin/env node
 var shoe     = require('shoe')
-var ecstatic = require('ecstatic')
-var http     = require('http')
 var join     = require('path').join
 var reloader = require('client-reloader')
 var through  = require('through')
 var Stack    = require('stack')
 
-var fs = require('fs')
-
-module.exports = function (config) {
+var Rumours = module.exports = function (config) {
   config = config || {}
   var udid         = require('udid')(config.name || 'rumours')
   var loadDb       = require('./db')(config)
-
-  var server =  http.createServer(Stack(
-        ecstatic(config.static || './static'),
-        ecstatic(join(__dirname, 'static'))
-      ))
 
   //inject arbitary authorization about who can access what db here...
   var auth = config.auth || function (meta, cb) {
@@ -25,7 +16,7 @@ module.exports = function (config) {
     return cb(null, meta.db)
   }
 
-  shoe(reloader(function (stream) {
+  var sh = shoe(reloader(function (stream) {
     var ts = through().pause(), s
 
     function error(err) {
@@ -47,16 +38,31 @@ module.exports = function (config) {
     })
 
     stream.pipe(ts)
-  })).install(server, config.prefix || '/rumours')
+  }))
 
-  return server
+  var install = sh.install
+
+  sh.install = function (server) {
+    install.call(sh, server, config.prefix || '/rumours')
+    return server
+  }
+
+  return sh
 }
 
 if(!module.parent) {
-  var config = require('./config')
-  module.exports(config)
+  var ecstatic = require('ecstatic')
+  var http     = require('http')
+  var config   = require('./config')
+
+  Rumours(config).install(
+    http.createServer(Stack(
+        ecstatic(config.static || './static'),
+        ecstatic(join(__dirname, 'static'))
+      ))
     .listen(config.port, function () {
       console.log( 'listening on', config.port)
     })
+  )
 }
 
