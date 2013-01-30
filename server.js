@@ -55,9 +55,15 @@ if(!module.parent) {
   var http     = require('http')
   var config   = require('./config')
 
+  var config = require('rc')('rumours', {
+    root: '/tmp/rumours',
+    port: 4567,
+    static: './static',
+  })
+
   Rumours(config).install(
     http.createServer(Stack(
-        ecstatic(config.static || './static'),
+        ecstatic(config.static),
         ecstatic(join(__dirname, 'static'))
       ))
     .listen(config.port, function () {
