@@ -3,7 +3,6 @@ var shoe     = require('shoe')
 var join     = require('path').join
 var reloader = require('client-reloader')
 var through  = require('through')
-var Stack    = require('stack')
 
 var Rumours = module.exports = function (config) {
   config = config || {}
@@ -53,7 +52,7 @@ var Rumours = module.exports = function (config) {
 if(!module.parent) {
   var ecstatic = require('ecstatic')
   var http     = require('http')
-  var config   = require('./config')
+  var Stack    = require('stack')
 
   var config = require('rc')('rumours', {
     root: '/tmp/rumours',
