@@ -11,7 +11,7 @@ var Rumours = module.exports = function (config) {
 
   //inject arbitary authorization about who can access what db here...
   var auth = config.auth || function (meta, cb) {
-    console.log('connection', meta)
+    console.log('connection', meta.db)
     return cb(null, meta.db)
   }
 
@@ -37,8 +37,8 @@ var Rumours = module.exports = function (config) {
     })
 
     stream.pipe(ts)
-  }))
-
+  }, {version: config.version}))
+  console.log(config)
   var install = sh.install
 
   sh.install = function (server) {
@@ -49,10 +49,7 @@ var Rumours = module.exports = function (config) {
   return sh
 }
 
-Rumours.static = join(__dirname, 'static')
-
 if(!module.parent) {
-  var ecstatic = require('ecstatic')
   var http     = require('http')
   var Stack    = require('stack')
 
@@ -63,10 +60,7 @@ if(!module.parent) {
   })
 
   Rumours(config).install(
-    http.createServer(Stack(
-        ecstatic(config.static),
-        ecstatic(Rumours.static)
-      ))
+    http.createServer(ecstatic(config.static))
     .listen(config.port, function () {
       console.log( 'listening on', config.port)
     })
