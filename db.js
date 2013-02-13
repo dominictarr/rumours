@@ -36,7 +36,7 @@ module.exports = function (config) {
     {
       name: 'all',
       map: function (key, model, emit) {
-        emit(model.name, 1)
+        emit(model.name.split('!'), 1)
       },
       reduce: function (acc, item) {
         return Number(acc) + Number(item)
