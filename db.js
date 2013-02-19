@@ -32,11 +32,13 @@ module.exports = function (config) {
   config.schema = config.schema || require('./schema')
 
   //just a simple count of all items.
-  var views  = config.views || [
+  var views  = config.views = config.views || [
     {
       name: 'all',
       map: function (key, model, emit) {
-        emit(model.name.split('!'), 1)
+        if(model.name) {
+          emit(model.name.split('!'), 1)
+        }
       },
       reduce: function (acc, item) {
         return Number(acc) + Number(item)
@@ -50,6 +52,7 @@ module.exports = function (config) {
     if(dbs[name]) {
       return whenReady(dbs[name], cb)
     }
+
     var dir = join(config.root, name)
     var db = levelup(dir, {createIfMissing: true})
 
@@ -57,10 +60,15 @@ module.exports = function (config) {
     //that will reveal that they are on the same server to attackers.
     var id = shasum(udid + name)
     LevelScuttlebutt(db, id, config.schema)
-    if(config.views)
-      config.views.forEach(db.scuttlebutt.addMapReduce)
+    if(config.views) {
+      config.views.forEach(db.scuttlebutt.addView.bind(db.scuttlebutt))
+      //this is broken for Scuttlebutt VIEWS!
+      //db.mapReduce.start()
+    }
 
     dbs[name] = db
+
+    db.on('reduce', console.log)
 
     whenReady(dbs[name], cb)
     return db

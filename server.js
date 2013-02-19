@@ -3,6 +3,7 @@ var shoe     = require('shoe')
 var join     = require('path').join
 var reloader = require('client-reloader')
 var through  = require('through')
+var ecstatic = require('ecstatic')
 
 var Rumours = module.exports = function (config) {
   config = config || {}
