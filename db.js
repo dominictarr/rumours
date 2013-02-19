@@ -4,6 +4,7 @@ var LevelScuttlebutt
             = require('level-scuttlebutt')
 var udid    = require('udid')('rumours')
 var shasum  = require('shasum')
+var mkdirp  = require('mkdirp')
 
 var schema  = require('./schema')
 
@@ -30,6 +31,8 @@ module.exports = function (config) {
   }
 
   config.schema = config.schema || require('./schema')
+
+  mkdirp.sync(config.root)
 
   //just a simple count of all items.
   var views  = config.views = config.views || [
