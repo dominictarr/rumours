@@ -11,7 +11,7 @@
     "scuttlebutt": "~5.5",
     "rc": "0.0.6",
     "through": "~2.1.0",
-    "r-array": "~0.4",
+    "r-array": "~0.5",
     "r-edit": "~0.1",
     "level-scuttlebutt": "~4.2.0",
     "shasum": "0.0.2",
