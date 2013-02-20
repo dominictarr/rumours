@@ -12,7 +12,7 @@
     "rc": "0.0.6",
     "through": "~2.1.0",
     "r-array": "~0.5",
-    "r-edit": "~0.1",
+    "r-edit": "~0.2",
     "level-scuttlebutt": "~4.2.0",
     "shasum": "0.0.2",
     "udid": "~0.1.2",
