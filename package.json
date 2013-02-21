@@ -13,7 +13,7 @@
     "through": "~2.1.0",
     "r-array": "~0.5",
     "r-edit": "~0.2",
-    "level-scuttlebutt": "~4.2.0",
+    "level-scuttlebutt": "~4.2.2",
     "shasum": "0.0.2",
     "udid": "~0.1.2",
     "crdt": "~3.2.2",
