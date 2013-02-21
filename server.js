@@ -4,7 +4,7 @@ var join     = require('path').join
 var reloader = require('client-reloader')
 var through  = require('through')
 var ecstatic = require('ecstatic')
-
+var stack    = require('stack')
 var Rumours = module.exports = function (config) {
   config = config || {}
   var udid         = require('udid')(config.name || 'rumours')
@@ -47,8 +47,35 @@ var Rumours = module.exports = function (config) {
     return server
   }
 
+  sh.REST = function (req, res, next) {
+    if(req.method.toLowerCase() !== 'get') return next()
+    var url = req.url.substring(1).split('/')
+    console.log('URL', url)
+    if(url.shift() !== 'db') return next()
+    var db = url.shift()
+    //add more features
+    auth({db: db, headers: req.headers}, function (err, name) {
+      if(err) return next(err)
+      loadDb(name, function (err, db) {
+        console.log('OPEN', url.join('!'))
+        db.scuttlebutt.open(url.join('!'), function (err, sb) {
+          if(err) return next(err)
+          res.writeHead(200, {'Content-type': 'application/json'})
+          res.end(JSON.stringify(sb.toJSON()) + '\n')
+          console.log(sb)
+          //sb.dispose()
+          sb.on('update', function () {
+            console.log(sb)
+          })
+        })
+      })
+    })
+  }
+
   return sh
 }
+
+
 
 if(!module.parent) {
   var http     = require('http')
@@ -60,8 +87,12 @@ if(!module.parent) {
     static: './static',
   })
 
-  Rumours(config).install(
-    http.createServer(ecstatic(config.static))
+  var rumours = Rumours(config)
+  rumours.install(
+    http.createServer(stack(
+      rumours.REST,
+      ecstatic(config.static)
+    ))
     .listen(config.port, function () {
       console.log( 'listening on', config.port)
     })
