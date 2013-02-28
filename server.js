@@ -5,6 +5,8 @@ var reloader = require('client-reloader')
 var through  = require('through')
 var ecstatic = require('ecstatic')
 var stack    = require('stack')
+var CRUD     = require('./crud')
+
 var Rumours = module.exports = function (config) {
   config = config || {}
   var udid         = require('udid')(config.name || 'rumours')
@@ -50,6 +52,11 @@ var Rumours = module.exports = function (config) {
   sh.openDb = function (name, cb) {
     return loadDb(name, cb)
   }
+
+  var crud = CRUD(sh)
+
+  for(var k in crud)
+    sh[k] = crud[k]
 
   sh.REST = function (req, res, next) {
     //TODO replace this with ./crud.js
