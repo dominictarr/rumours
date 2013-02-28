@@ -14,7 +14,7 @@ module.exports = {
   'crdt'        : create(require('crdt')),
   'append-only' : create(require('append-only')),
   'expiry-model': create(require('expiry-model')),
-  'value'       : create(require('r-value'))
+  'r-value'       : create(require('r-value'))
   //hmm, what about scuttlebucket?
 }
 
