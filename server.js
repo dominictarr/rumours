@@ -52,16 +52,16 @@ var Rumours = module.exports = function (config) {
   }
 
   sh.REST = function (req, res, next) {
+    //TODO replace this with ./crud.js
+
     if(req.method.toLowerCase() !== 'get') return next()
     var url = req.url.substring(1).split('/')
-    console.log('URL', url)
     if(url.shift() !== 'db') return next()
     var db = url.shift()
     //add more features
     auth({db: db, headers: req.headers}, function (err, name) {
       if(err) return next(err)
       loadDb(name, function (err, db) {
-        console.log('OPEN', url.join('!'))
         db.scuttlebutt.open(url.join('!'), function (err, sb) {
           if(err) return next(err)
           res.writeHead(200, {'Content-type': 'application/json'})
