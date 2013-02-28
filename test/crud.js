@@ -7,15 +7,15 @@ var rumours = Rumours({
 //  port: ~~(Math.random()*40000)
 })
 
-var Crud = require('../crud')
+//var Crud = require('../crud')
 
 test('crud', function (t) {
 
-  var crud = Crud(rumours)
+  var crud = rumours
 
   crud.create('test', 'model!test1', {
     r1: r = Math.random()
-  }, function (err) {
+  }, function (err, obj) {
     if(err) throw err
     crud.read('test', 'model!test1', function (err, obj) {
       if(err) throw err
