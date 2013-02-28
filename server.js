@@ -39,12 +39,16 @@ var Rumours = module.exports = function (config) {
 
     stream.pipe(ts)
   }, {version: config.version}))
-  console.log(config)
+
   var install = sh.install
 
   sh.install = function (server) {
     install.call(sh, server, config.prefix || '/rumours')
     return server
+  }
+
+  sh.openDb = function (name, cb) {
+    return loadDb(name, cb)
   }
 
   sh.REST = function (req, res, next) {
