@@ -29,6 +29,9 @@ module.exports = function (rumours) {
     }
 
     var mergers = {
+      'r-value': function (model, obj) {
+        model.set(obj)
+      },
       model: function (model, obj) {
         for(var k in obj) {
           if(!deepEqual(obj[k], model.get(k)))
@@ -61,14 +64,17 @@ module.exports = function (rumours) {
     }
 
     var deleters = {
-      model: function (model, obj) {
+      'r-value': function (model) {
+        model.set(null)
+      },
+      model: function (model) {
         console.log('predel', model.toJSON())
         model.each(function (_, k) {
           model.set(k, null)
         })
         console.log('postdel', model.toJSON())
       },
-      crdt: function (model, obj) {
+      crdt: function (model) {
         for(var k in model.rows)
           model.set(k, null)
       }
