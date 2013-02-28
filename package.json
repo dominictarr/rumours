@@ -24,9 +24,12 @@
     "levelup": "~0.5.3",
     "append-only": "~0.2.3",
     "expiry-model": "~1.0.2",
-    "stack": "~0.1.0"
+    "stack": "~0.1.0",
+    "deep-equal": "0.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tape": "~0.2.2"
+  },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done",
     "build": "./build.sh"
