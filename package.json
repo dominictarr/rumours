@@ -10,10 +10,10 @@
     "client-reloader": "~1.2.0",
     "scuttlebutt": "~5.5",
     "rc": "0.0.6",
-    "through": "~2.1.0",
+    "through": "~2.2.0",
     "r-array": "~0.5",
     "r-edit": "~0.2",
-    "level-scuttlebutt": "~4.2.4",
+    "level-scuttlebutt": "~5.0.0",
     "shasum": "0.0.2",
     "udid": "~0.1.2",
     "crdt": "~3.2.2",
@@ -21,15 +21,19 @@
     "ecstatic": "~0.3.0",
     "shoe": "0.0.7",
     "reconnect": "~0.4.4",
-    "levelup": "~0.5.3",
+    "levelup": "~0.6",
     "append-only": "~0.2.3",
     "expiry-model": "~1.0.2",
     "stack": "~0.1.0",
     "deep-equal": "0.0.0",
-    "r-value": "~1.0.0"
+    "r-value": "~1.1",
+    "map-stream": "0.0.2",
+    "level-sublevel": "~4.0.0",
+    "map-reduce": "~3.1.2"
   },
   "devDependencies": {
-    "tape": "~0.2.2"
+    "tape": "~0.2.2",
+    "rimraf": "~2.1.4"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done",
