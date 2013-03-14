@@ -1,7 +1,10 @@
-var levelup = require('levelup')
-var join    = require('path').join
+var levelup   = require('levelup')
+var SubLevel  = require('level-sublevel')
 var LevelScuttlebutt 
-            = require('level-scuttlebutt')
+              = require('level-scuttlebutt')
+var MapReduce = require('map-reduce')
+
+var join      = require('path').join
 var udid    = require('udid')('rumours')
 var shasum  = require('shasum')
 var mkdirp  = require('mkdirp')
@@ -40,14 +43,24 @@ module.exports = function (config) {
       name: 'all',
       map: function (key, model, emit) {
         if(model.name) {
-          emit(model.name.split('!'), 1)
+          emit(key.split('!'), 1)
         }
       },
       reduce: function (acc, item) {
         return Number(acc) + Number(item)
       },
       initial: 0
-    }
+    },
+    {
+      name: 'ids',
+      map: function (key, model, emit) {
+          emit('id', 1)
+      },
+      reduce: function (acc, item) {
+        return Number(acc) + Number(item)
+      },
+      initial: 0
+    },
   ]
 
   return function (name, cb) {
@@ -58,20 +71,20 @@ module.exports = function (config) {
 
     var dir = join(config.root, name)
     var db = levelup(dir, {createIfMissing: true})
-
+    SubLevel(db)
     //don't give each database the same hash,
     //that will reveal that they are on the same server to attackers.
     var id = shasum(udid + name)
     LevelScuttlebutt(db, id, config.schema)
     if(config.views) {
-      config.views.forEach(db.scuttlebutt.addView.bind(db.scuttlebutt))
-      //this is broken for Scuttlebutt VIEWS!
-      //db.mapReduce.start()
+      config.views.forEach(function (view) {
+        db.views[view.name] =
+          MapReduce(db, view.name, view.map, view.reduce, view.initial)
+          .on('reduce', console.log)
+      })
     }
 
     dbs[name] = db
-
-    db.on('reduce', console.log)
 
     whenReady(dbs[name], cb)
     return db

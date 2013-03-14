@@ -1,4 +1,5 @@
 var deepEqual = require('deep-equal')
+var through   = require('through')
 
 module.exports = function (rumours) {
 
@@ -11,6 +12,19 @@ module.exports = function (rumours) {
             if(err) return cb(err)
             fun(model, json, cb)
           })
+        })
+      }
+    }
+
+    function openView(fun) {
+      return function (base, name, json, cb) {
+        var rs = through()
+        rs.write = rs.end = rs.writable = false;
+
+        if(!cb) cb = json, json = null
+        rumours.openDb(base, function (err, db) {
+          if(err) return cb(err)
+          fun(db.createReadStream(), db, cb)  
         })
       }
     }
@@ -34,8 +48,9 @@ module.exports = function (rumours) {
       },
       model: function (model, obj) {
         for(var k in obj) {
-          if(!deepEqual(obj[k], model.get(k)))
-            model.set(k, obj[k])
+          if('function' !== typeof obj[k]
+            && !deepEqual(obj[k], model.get(k))
+          ) model.set(k, obj[k])
         }
       },
       crdt: function (model, obj) {
@@ -50,7 +65,9 @@ module.exports = function (rumours) {
           } else {
             var change = {}
             for(var j in _row) {
-              if(!deepEqual(_row[j], row.get(j)))
+              if('function' !== typeof _row[j]
+                && !deepEqual(_row[j], row.get(j))
+              )
                 change[j] = _row[j]
             }
             all[j] = change
@@ -68,11 +85,9 @@ module.exports = function (rumours) {
         model.set(null)
       },
       model: function (model) {
-        console.log('predel', model.toJSON())
         model.each(function (_, k) {
           model.set(k, null)
         })
-        console.log('postdel', model.toJSON())
       },
       crdt: function (model) {
         for(var k in model.rows)
@@ -97,16 +112,19 @@ module.exports = function (rumours) {
         if(!merge) 
           return cb(new Error('update/create'
           + ' operation not yet supported on this type!'))
-
         try {
           merge(model, obj)
         } catch (err) { return cb(err) }
 
-        cb(null, model.toJSON())
+        var obj = model.toJSON()
+        model.dispose()
+        cb(null, obj)
       }),
 
       read: open(function (model, _, cb) {
-        cb(null, clearNull(model.toJSON()))
+        var obj = model.toJSON()
+        model.dispose()
+        cb(null, clearNull(obj))
       }),
 
       update: update,
@@ -122,7 +140,39 @@ module.exports = function (rumours) {
           del(model)
         } catch (err) { return cb(err) }
 
-        cb(null)
-      })
+        var obj = model.toJSON()
+        model.dispose()
+        cb(null, obj)
+      }),
+      list:  function (base, name, json, cb) {
+        var ms
+        if(!cb) cb = json, json = null
+        var db = rumours.openDb(base, function (err, db) { })
+
+        db.createReadStream()
+          .pipe(ms = through(function(data) {
+            var obj = JSON.parse(data.value)
+            obj._id = data.key
+            this.queue(obj)
+          }))
+
+          /*.pipe(ms = mapStream(function (data, next) {
+          
+          var key = data.key.pop()
+          db.scuttlebutt.open(key, function (err, sb) {
+            var obj = sb && sb.toJSON()
+            sb.dispose()
+            if(obj) obj._id = sb.name
+            if(err) next(err)
+            else    next(null, obj)
+         })*/
+        //}))
+
+        db.on('error', function (err) {
+          ms.emit('error', err)
+        })
+
+        return ms
+      }
     }
 }
