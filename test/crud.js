@@ -30,12 +30,11 @@ rimraf('/tmp/rumours-test', function () {
           crud.read('test', 'model!test1', function (err, obj) {
             if(err) throw err
             console.log('after delete', obj)
-            t.deepEqual(obj, {})
-            t.end()
+            t.deepEqual(obj, null)
             crud.list('test', 'model', function (err, list) {
               if(err) throw err
               console.log('LIST', list)
-
+              t.equal(list.length, 0)
               t.end()
             })
           })
@@ -60,30 +59,25 @@ rimraf('/tmp/rumours-test', function () {
 
     var n = 3
     function next () {
+      console.log('NEXT', n)
       if(--n) return
       var list = []
-      setTimeout(function () {
-        //note, rumours is not designed to be immediately consistent.
-        //(required for REST)
-        //updating a something and then requesting a view immediately 
-        //return updated results.
-        //the user is expected to tail the view, and they will recieve the
-        //updates promptly, but there is no checking to enforce that the write is complete.
-        //that would require delaying the callback until the view has been written.
-        crud.list('test', 'model')
-        .on('data', function (data) {
-          console.log('data', data)
-          if(/_\d$/.test(data._id))
-            list.push(data)
-        })
-        .on('end', function () {
-          t.equal(list[0].val, r1.val)
-          t.equal(list[1].val, r2.val)
-          t.equal(list[2].val, r3.val)
-          t.end()
-        })
 
-      }, 500)
+      console.log('LIST')
+      crud.list('test', 'model')
+      .on('data', function (data) {
+        console.log('data', data)
+        if(/_\d$/.test(data._id))
+          list.push(data)
+      })
+      .on('end', function () {
+        t.equal(list[0].val, r1.val)
+        t.equal(list[1].val, r2.val)
+        t.equal(list[2].val, r3.val)
+        console.log('END')
+        t.end()
+      })
+
     }
 
   })
