@@ -67,10 +67,11 @@ rimraf('/tmp/rumours-test', function () {
       crud.list('test', 'model')
       .on('data', function (data) {
         console.log('data', data)
-        if(/_\d$/.test(data._id))
+        if(/_\d$/.test(data.id))
           list.push(data)
       })
       .on('end', function () {
+        console.log("END")
         t.equal(list[0].val, r1.val)
         t.equal(list[1].val, r2.val)
         t.equal(list[2].val, r3.val)
@@ -81,5 +82,21 @@ rimraf('/tmp/rumours-test', function () {
     }
 
   })
+  test('crud-empty-list', function (t) {
 
+    var crud = rumours, list = []
+
+    crud.list('test2', 'model')
+    .on('data', function (data) {
+      console.log('data', data)
+      if(/_\d$/.test(data._id))
+        list.push(data)
+    })
+    .on('end', function () {
+      t.deepEqual(list, [])
+      console.log('END')
+      t.end()
+    })
+
+  })
 })
