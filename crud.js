@@ -158,22 +158,24 @@ module.exports = function (rumours) {
       })
     }),
     list:  function (base, name, json, cb) {
-      var ms
       if(!cb) cb = json, json = null
+      var a = []
+      var ms = through(function(data) {
+        var obj = JSON.parse(data.value)
+        if(!hasKeys(obj)) return
+        obj.id = obj.id || data.key
+        this.queue(obj)
+        a.push(obj)
+      }, function () {
+        this.queue(null)
+        if(cb) cb(null, a)
+      })
       var db = rumours.openDb(base, function (err, db) { })
+      console.log('LIST', base, name)
 
       var a = []
-      db.createReadStream()
-        .pipe(ms = through(function(data) {
-          var obj = JSON.parse(data.value)
-          if(!hasKeys(obj)) return
-          obj._id = data.key
-          this.queue(obj)
-          a.push(obj)
-        }, function () {
-
-          if(cb) cb(null, a)
-        }))
+      db.createReadStream({start: name, end: name + '~'})
+        .pipe(ms )
 
       db.on('error', function (err) {
         if(cb) cb(err)
