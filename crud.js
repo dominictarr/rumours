@@ -153,7 +153,6 @@ module.exports = function (rumours) {
       var obj = model.toJSON()
       model.dispose()
       this.once('drain', function () {
-      console.log('DRAIN DELET')
         cb(null, obj)
       })
     }),
@@ -164,6 +163,7 @@ module.exports = function (rumours) {
         var obj = JSON.parse(data.value)
         if(!hasKeys(obj)) return
         obj.id = obj.id || data.key
+        obj._key_ = data.key
         this.queue(obj)
         a.push(obj)
       }, function () {
@@ -171,8 +171,6 @@ module.exports = function (rumours) {
         if(cb) cb(null, a)
       })
       var db = rumours.openDb(base, function (err, db) { })
-      console.log('LIST', base, name)
-
       var a = []
       db.createReadStream({start: name, end: name + '~'})
         .pipe(ms )
