@@ -84,7 +84,7 @@ rimraf('/tmp/rumours-test', function () {
   })
   test('crud-empty-list', function (t) {
 
-    var crud = rumours, list = []
+    var crud = rumours, r1, r2, r3
 
     crud.list('test2', 'model')
     .on('data', function (data) {
@@ -93,10 +93,38 @@ rimraf('/tmp/rumours-test', function () {
         list.push(data)
     })
     .on('end', function () {
-      t.deepEqual(list, [])
       console.log('END')
       t.end()
     })
 
   })
+
+  test('crud-delete-list', function (t) {
+
+    var crud = rumours
+
+    crud.create('test3', 'r-value!test1', {
+      r1: r = Math.random()
+    }, function (err, obj) {
+      if(err) throw err
+      crud.read('test3', 'r-value!test1', function (err, obj) {
+        if(err) throw err
+        console.log(obj)
+
+        t.deepEqual(obj, {r1: r})
+
+        crud.delete('test3', 'r-value!test1', function (err) {
+          if(err) throw err
+          crud.list('test3', 'r-value', function (err, list) {
+            if(err) throw err
+            console.log('LIST', list)
+            t.equal(list.length, 0)
+            t.end()
+          })
+        })
+      })
+    })
+  })
+
+
 })
