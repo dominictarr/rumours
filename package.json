@@ -43,7 +43,6 @@
   },
   "main": "./server.js",
   "browser": "./client.js",
-  "browserify": "./client.js",
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT"
 }
