@@ -3,13 +3,14 @@ var SubLevel  = require('level-sublevel')
 var LevelScuttlebutt 
               = require('level-scuttlebutt')
 var MapReduce = require('map-reduce')
+var os        = require('os')
 
 var join      = require('path').join
-var udid    = require('udid')('rumours')
-var shasum  = require('shasum')
-var mkdirp  = require('mkdirp')
+var udid      = require('udid')('rumours')
+var shasum    = require('shasum')
+var mkdirp    = require('mkdirp')
 
-var schema  = require('./schema')
+var schema    = require('./schema')
 
 var dbs = {}
 
@@ -29,9 +30,11 @@ function whenReady (db, cb) {
 }
 
 module.exports = function (config) {
-  config = config || {
-    root: '/tmp/rumours-default'
-  }
+  config = config || {}
+
+  if(!config.root)
+    config.root = join(os.tmpdir(), 'rumours-default')
+
 
   config.schema = config.schema || require('./schema')
 
