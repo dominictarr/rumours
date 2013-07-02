@@ -73,11 +73,6 @@ var Rumours = module.exports = function (config) {
           if(err) return next(err)
           res.writeHead(200, {'Content-type': 'application/json'})
           res.end(JSON.stringify(sb.toJSON()) + '\n')
-          console.log(sb)
-          //sb.dispose()
-          sb.on('update', function () {
-            console.log(sb)
-          })
         })
       })
     })
